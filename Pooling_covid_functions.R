@@ -200,25 +200,25 @@ plot_tune2_ribbon_covid = function(data, xlab, legend_lab){
   
   # Summarise the data
   a = data %>%
-    gather(data = ., key = "metric", value = "value", -c(seed, param, param2)) %>%
+    gather(data = ., key = "metric", value = "value", -c(param, param2)) %>%
     group_by(param2, param, metric) %>%
     summarise(lb = quantile(x = value, probs = 0.025), 
               med = median(x = value),
-              ub = quantile(x = value, probs = 0.975)) %>%
-    dplyr::filter(metric == "Paccept")
+              ub = quantile(x = value, probs = 0.975)) 
   
   # Visualize
   b = ggplot(data = a) +
-    geom_ribbon(aes(x = param, ymin = lb, ymax = ub, group = as.factor(param2), fill = as.factor(param2)), alpha = 0.3) +
-    geom_line(aes(x = param, y = med, color = as.factor(param2))) +
-    geom_point(aes(x = param, y = med, color = as.factor(param2))) +
+    geom_ribbon(aes(x = param, ymin = lb, ymax = ub, group = as.factor(metric), fill = as.factor(metric)), alpha = 0.3) +
+    geom_line(aes(x = param, y = med, color = as.factor(metric))) +
+    geom_point(aes(x = param, y = med, color = as.factor(metric))) +
     scale_y_continuous(breaks = seq(from = 0, to = 1, by = 0.1)) +
     scale_fill_discrete(name = legend_lab) +
     scale_color_discrete(name = legend_lab) +
     coord_cartesian(ylim = c(0,1)) +
-    labs(x = xlab, y = "Probability of acceptance (2.5th - 97.5th percentile)") +
+    labs(x = xlab, y = "Metrics (2.5th - 97.5th percentile)") +
     theme_bw() +
-    theme(legend.position = "top")
+    theme(legend.position = "top")+
+    facet_wrap(~param2)
   
   return(b)
 }
