@@ -97,7 +97,7 @@ clean_covid = function(list){
   a = unlist(list)
   
   # Find the indices of each type of metric
-  sens_ind = seq(from = 1, by = 3, length.out = length(a)/3)
+  sens_ind = seq(from = 1, by = 2, length.out = length(a)/2)
   spec_ind = sens_ind + 1
   
   #Rearrange the results
