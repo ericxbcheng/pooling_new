@@ -154,6 +154,15 @@ tune_param_sec_covid = function(Args, var_prim, vals_prim, var_sec, n_iter, vals
   return(sim_data)
 }
 
+metrics_sec_covid = function(data, vals_prim, vals_sec, n_iter){
+  
+  a = map(.x = data, .f = bind_rows) 
+  b = bind_rows(a)
+  param2 = rep(x = vals_sec, each = length(vals_prim) * n_iter)
+  
+  return(data.frame(b, param2))
+}
+
 # # Calculate the cost of reagents and pipetting
 # calc_1d_cost = function(data, n, by){
 #   
@@ -187,3 +196,29 @@ tune_param_sec_covid = function(Args, var_prim, vals_prim, var_sec, n_iter, vals
 #   }
 # }
 
+plot_tune2_ribbon_covid = function(data, xlab, legend_lab){
+  
+  # Summarise the data
+  a = data %>%
+    gather(data = ., key = "metric", value = "value", -c(seed, param, param2)) %>%
+    group_by(param2, param, metric) %>%
+    summarise(lb = quantile(x = value, probs = 0.025), 
+              med = median(x = value),
+              ub = quantile(x = value, probs = 0.975)) %>%
+    dplyr::filter(metric == "Paccept")
+  
+  # Visualize
+  b = ggplot(data = a) +
+    geom_ribbon(aes(x = param, ymin = lb, ymax = ub, group = as.factor(param2), fill = as.factor(param2)), alpha = 0.3) +
+    geom_line(aes(x = param, y = med, color = as.factor(param2))) +
+    geom_point(aes(x = param, y = med, color = as.factor(param2))) +
+    scale_y_continuous(breaks = seq(from = 0, to = 1, by = 0.1)) +
+    scale_fill_discrete(name = legend_lab) +
+    scale_color_discrete(name = legend_lab) +
+    coord_cartesian(ylim = c(0,1)) +
+    labs(x = xlab, y = "Probability of acceptance (2.5th - 97.5th percentile)") +
+    theme_bw() +
+    theme(legend.position = "top")
+  
+  return(b)
+}
