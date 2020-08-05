@@ -17,7 +17,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 1. Load libraries and the script.
 
-```{r}
+```{r, warning = FALSE, message = FALSE}
 library(tidyverse)
 source("Pooling_covid_functions.R")
 ```
@@ -28,7 +28,7 @@ source("Pooling_covid_functions.R")
 * Pool size: 1, 2, 3, ..., 10
 
 ```{r}
-n_iter = 10
+n_iter = 100
 n = 20000
 n_pos = 1
 pool_size = 5
@@ -56,7 +56,7 @@ saveRDS(object = sim_data, file = sprintf(fmt = "covid_sim_%d_0.001to0.01_1to10_
 4. Clean up the simulated data.
 
 ```{r, echo = FALSE}
-sim_data = readRDS("covid_sim_20000_0.001to0.01_1to10_10.rds")
+sim_data = readRDS("covid_sim_20000_0.001to0.01_1to10_100.rds")
 ```
 
 ```{r}
