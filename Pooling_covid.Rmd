@@ -1,0 +1,79 @@
+---
+title: "Pooling for COVID"
+author: "Xianbin Cheng"
+date: "8/5/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Objective
+
+  Investigate pooling for COVID testing.
+  
+# Method
+
+1. Load libraries and the script.
+
+```{r}
+library(tidyverse)
+source("Pooling_covid_functions.R")
+```
+
+2. Set parameters.
+
+* Prevalence: 0.1%, 0.2%, 0.3%, ..., 1%
+* Pool size: 1, 2, 3, ..., 10
+
+```{r}
+n_iter = 10
+n = 20000
+n_pos = 1
+pool_size = 5
+thresh = 0
+
+# Primary tuning param: n_pos
+prev = seq(from = 0.001, to = 0.01, by = 0.001)
+vals_prim = prev * n
+
+# Secondary tuning param: pool_size
+vals_sec = 1:10
+```
+
+3. Run the simulation.
+
+```{r, eval = FALSE}
+# Simulation
+Args_default = list(n = n, n_pos = n_pos, pool_size = pool_size, thresh = thresh)  
+
+sim_data = tune_param_sec_covid(Args = Args_default, var_prim = "n_pos", vals_prim = vals_prim, 
+                                var_sec = "pool_size", n_iter = n_iter, vals_sec = vals_sec)
+saveRDS(object = sim_data, file = sprintf(fmt = "covid_sim_%d_0.001to0.01_1to10_%d.rds", n, n_iter))
+```
+
+4. Clean up the simulated data.
+
+```{r, echo = FALSE}
+sim_data = readRDS("covid_sim_20000_0.001to0.01_1to10_10.rds")
+```
+
+```{r}
+sim_data_cleaned = metrics_sec_covid(data = sim_data, vals_prim = vals_prim, vals_sec = vals_sec, n_iter = n_iter)
+```
+
+# Results
+
+1.  Visualization of sensitivity and specificity.
+
+```{r, echo = FALSE}
+plot_tune2_ribbon_covid(data = sim_data_cleaned, xlab = "Prevalence (%)", legend_lab = "Type", xtick = prev * 100)
+```
+
+# Appendix
+
+```{r, echo = FALSE}
+sessionInfo()
+```
+

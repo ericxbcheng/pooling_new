@@ -196,7 +196,7 @@ metrics_sec_covid = function(data, vals_prim, vals_sec, n_iter){
 #   }
 # }
 
-plot_tune2_ribbon_covid = function(data, xlab, legend_lab){
+plot_tune2_ribbon_covid = function(data, xlab, legend_lab, xtick){
   
   # Summarise the data
   a = data %>%
@@ -214,6 +214,7 @@ plot_tune2_ribbon_covid = function(data, xlab, legend_lab){
     scale_y_continuous(breaks = seq(from = 0, to = 1, by = 0.1)) +
     scale_fill_discrete(name = legend_lab) +
     scale_color_discrete(name = legend_lab) +
+    scale_x_continuous(breaks = unique(a$param), labels = xtick) +
     coord_cartesian(ylim = c(0,1)) +
     labs(x = xlab, y = "Metrics (2.5th - 97.5th percentile)") +
     theme_bw() +

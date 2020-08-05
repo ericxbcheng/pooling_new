@@ -1,7 +1,7 @@
 library(tidyverse)
 source("Pooling_covid_functions.R")
 
-n_iter = 100
+n_iter = 10
 n = 20000
 n_pos = 1
 pool_size = 5
@@ -23,7 +23,7 @@ saveRDS(object = sim_data, file = sprintf(fmt = "covid_sim_%d_0.001to0.01_1to10_
 
 
 sim_data_cleaned = metrics_sec_covid(data = sim_data, vals_prim = vals_prim, vals_sec = vals_sec, n_iter = n_iter)  
-plot_tune2_ribbon_covid(data = sim_data, xlab = "Number of positive samples", legend_lab = "pool size")
+plot_tune2_ribbon_covid(data = sim_data_cleaned, xlab = "Prevalence (%)", legend_lab = "Type", xtick = prev * 100)
 
 
 ######################## Debug #####################
