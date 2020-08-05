@@ -8,7 +8,7 @@ make_samples = function(n, n_pos){
   return(sample(x = c(a,b), size = n, replace = FALSE))
 }
 
-make_pool_idx = function(n, pool_size){
+make_pool_idx = function(n, pool_size, for2D = FALSE){
   
   quotient = n %/% pool_size
   modulo = n %% pool_size
@@ -18,7 +18,13 @@ make_pool_idx = function(n, pool_size){
     return(a)
     
   } else {
-    a = rep.int(x = 1:quotient, times = pool_size)
+    
+    if(for2D == FALSE){
+      a = rep.int(x = 1:quotient, times = pool_size)
+    } else {
+      a = rep(x = 1:quotient, each = pool_size)
+    }
+    
     b = seq.int(from = quotient + 1, to = quotient + modulo, by = 1)
     return(c(a,b))
   }
@@ -32,6 +38,35 @@ find_pool_pos_covid = function(conc, pool_idx, thresh){
   
   # Determine positive or negative pool
   return(pools > thresh)
+}
+
+
+find_pool_pos_2d_covid = function(conc, n, pool_size, thresh, message = FALSE){
+  
+  #get number of sets to compare
+  n_sets <- n %/% pool_size^2
+  n_indiv = n %% pool_size^2
+  
+  if(message == TRUE){
+    if(n %% pool_size^2 != 0) print("need to add results in for remainder")
+  }
+  
+  
+}
+
+compare_2D_pools_ec = function(n, pool_size){
+  
+  #get number of sets to compare
+  n_sets <- n %/% pool_size^2
+  if(n %% pool_size^2 != 0) print("need to add results in for remainder")
+  #compare by sets
+  status<-n
+  setID = rep(x = 1:n_sets, each = pool_size)
+  for( i in 1:unique(setID) ) {
+    d <- row_pools[i*(1:pool_size)] %o% col_pools[i*(1:pool_size)]
+    status[(1:(pool_size)^2)*i] <- as.vector(d)
+  }
+  return(status)
 }
 
 calc_1d_metrics_covid = function(n, conc, pool_pos, pool_idx){

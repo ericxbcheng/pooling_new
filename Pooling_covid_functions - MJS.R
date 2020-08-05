@@ -30,6 +30,7 @@ make_pools = function(n, pool_size, for2D=F){
 }
 
 compare_2D_pools = function(row_pools, col_pools, n, pool_size){
+  
   #get number of sets to compare
   n_sets <- length(row_pools) %/% pool_size
   if(n > n_sets*pool_size^2) print("need to add results in for remainder")
